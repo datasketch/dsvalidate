@@ -1,0 +1,30 @@
+Package: dsvalidate
+Title: Validate data for DS apps
+Version: 0.0.0.9000
+Authors@R: c( 
+    person(given = "Juan Pablo",
+           family = "Marin Diaz",
+           role = c("aut", "cre"),
+           email = "jpmarindiaz@gmail.com"),
+    person(given = "Lena", 
+           family = "Mangold", 
+           role = "ctb",
+           email = "lena@mangold.org"),
+    person("Datasketch", role = c("cph", "fnd"))
+    )
+Description: Validate data to ensure correct data format, column names, data types 
+  and column properties for Datasketch apps.
+URL: https://github.com/datasketch/dsvalidate
+BugReports: https://github.com/datasketch/dsvalidate/issues
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Depends:
+    validate
+Imports:
+    tidyverse,
+    homodatum
+Suggests: 
+    testthat (>= 2.1.0)
