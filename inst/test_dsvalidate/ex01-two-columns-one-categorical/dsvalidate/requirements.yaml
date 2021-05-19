@@ -1,0 +1,9 @@
+- label: at_least_two_columns
+  n_cols: 
+    greater_than: 1
+- label: at_least_one_categorical_column
+  n_cols: 
+    greater_than: 0
+  condition:
+    hdType:
+      equals: Cat
