@@ -6,11 +6,3 @@
       equals: Cat
     n_distinct:
       less_than: 20
-
-
-
-- label: cat_cols_fewer_than_20_distinct
-  requirements: true
-  conditions:
-    hdType_equals_Cat: true
-    n_distinct_less_than_20: true
