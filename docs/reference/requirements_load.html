@@ -114,7 +114,7 @@ validate_requirements." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Load requirements for validation</h1>
-    <small class="dont-index">Source: <a href='https://github.com/datasketch/dsvalidate/blob/master/R/validate.R'><code>R/validate.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/datasketch/dsvalidate/blob/master/R/load.R'><code>R/load.R</code></a></small>
     <div class="hidden name"><code>requirements_load.Rd</code></div>
     </div>
 
@@ -149,15 +149,80 @@ for each requirement. Sublists (requirements are connected with logical AND).</p
 <span class='co'># The logic behind the requirements in the yaml file is:</span>
 <span class='co'># - requirement 1: number of columns needs to be greater than 1</span>
 <span class='co'># - requirement 2: number of columns where hdType is equal to Cat needs to be greater than 0</span>
-<span class='va'>req1</span> <span class='op'>&lt;-</span> <span class='fu'>yaml</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/yaml/man/read_yaml.html'>read_yaml</a></span><span class='op'>(</span><span class='st'>"inst/test_dsvalidate/ex01-two-columns-one-categorical/dsvalidate/requirements.yaml"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open file 'inst/test_dsvalidate/ex01-two-columns-one-categorical/dsvalidate/requirements.yaml': No such file or directory</span></div><div class='output co'>#&gt; <span class='error'>Error in file(file, "rt", encoding = fileEncoding): cannot open the connection</span></div><div class='input'><span class='va'>req1</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'req1' not found</span></div><div class='input'>
+<span class='va'>file_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"test_dsvalidate"</span>, <span class='st'>"ex01-two-columns-one-categorical"</span>,<span class='st'>"dsvalidate"</span>, package <span class='op'>=</span> <span class='st'>"dsvalidate"</span><span class='op'>)</span>
+<span class='va'>req1</span> <span class='op'>&lt;-</span> <span class='fu'>yaml</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/yaml/man/read_yaml.html'>read_yaml</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>file_path</span>, <span class='st'>"requirements.yaml"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: incomplete final line found on 'C:/Users/lena.mangold/AppData/Local/Temp/Rtmp0W1e6n/temp_libpath63887dc936db/dsvalidate/test_dsvalidate/ex01-two-columns-one-categorical/dsvalidate/requirements.yaml'</span></div><div class='input'><span class='va'>req1</span>
+</div><div class='output co'>#&gt; [[1]]
+#&gt; [[1]]$label
+#&gt; [1] "at_least_two_columns"
+#&gt; 
+#&gt; [[1]]$n_cols
+#&gt; [[1]]$n_cols$greater_than
+#&gt; [1] 1
+#&gt; 
+#&gt; 
+#&gt; 
+#&gt; [[2]]
+#&gt; [[2]]$label
+#&gt; [1] "at_least_one_categorical_column"
+#&gt; 
+#&gt; [[2]]$n_cols
+#&gt; [[2]]$n_cols$greater_than
+#&gt; [1] 0
+#&gt; 
+#&gt; 
+#&gt; [[2]]$condition
+#&gt; [[2]]$condition$hdType
+#&gt; [[2]]$condition$hdType$equals
+#&gt; [1] "Cat"
+#&gt; 
+#&gt; 
+#&gt; 
+#&gt; </div><div class='input'>
 <span class='co'># Example 2: Need 2+ columns in total with fewer than 20 categories each</span>
 <span class='co'># The logic behind the requirements in the yaml file is:</span>
 <span class='co'># - number of columns where hdType is equal to Cat and n_distinct is less than 20 needs to be greater than 1</span>
-<span class='va'>req2</span> <span class='op'>&lt;-</span> <span class='fu'>yaml</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/yaml/man/read_yaml.html'>read_yaml</a></span><span class='op'>(</span><span class='st'>"inst/test_dsvalidate/ex02-two-categorical-cols-max-distinct-cat/dsvalidate/requirements.yaml"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: cannot open file 'inst/test_dsvalidate/ex02-two-categorical-cols-max-distinct-cat/dsvalidate/requirements.yaml': No such file or directory</span></div><div class='output co'>#&gt; <span class='error'>Error in file(file, "rt", encoding = fileEncoding): cannot open the connection</span></div><div class='input'><span class='va'>req2</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'req2' not found</span></div></pre>
+<span class='va'>file_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"test_dsvalidate"</span>, <span class='st'>"ex02-two-categorical-cols-max-distinct-cat"</span>,<span class='st'>"dsvalidate"</span>, package <span class='op'>=</span> <span class='st'>"dsvalidate"</span><span class='op'>)</span>
+<span class='va'>req2</span> <span class='op'>&lt;-</span> <span class='fu'>yaml</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/yaml/man/read_yaml.html'>read_yaml</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>file_path</span>, <span class='st'>"requirements.yaml"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: incomplete final line found on 'C:/Users/lena.mangold/AppData/Local/Temp/Rtmp0W1e6n/temp_libpath63887dc936db/dsvalidate/test_dsvalidate/ex02-two-categorical-cols-max-distinct-cat/dsvalidate/requirements.yaml'</span></div><div class='input'><span class='va'>req2</span>
+</div><div class='output co'>#&gt; [[1]]
+#&gt; [[1]]$label
+#&gt; [1] "cat_cols_fewer_than_20_distinct"
+#&gt; 
+#&gt; [[1]]$n_cols
+#&gt; [[1]]$n_cols$greater_than
+#&gt; [1] 1
+#&gt; 
+#&gt; 
+#&gt; [[1]]$conditions_all
+#&gt; [[1]]$conditions_all$hdType
+#&gt; [[1]]$conditions_all$hdType$equals
+#&gt; [1] "Cat"
+#&gt; 
+#&gt; 
+#&gt; [[1]]$conditions_all$n_distinct
+#&gt; [[1]]$conditions_all$n_distinct$less_than
+#&gt; [1] 20
+#&gt; 
+#&gt; 
+#&gt; 
+#&gt; 
+#&gt; [[2]]
+#&gt; [[2]]$label
+#&gt; [1] "cat_cols_fewer_than_20_distinct"
+#&gt; 
+#&gt; [[2]]$requirements
+#&gt; [1] TRUE
+#&gt; 
+#&gt; [[2]]$conditions
+#&gt; [[2]]$conditions$hdType_equals_Cat
+#&gt; [1] TRUE
+#&gt; 
+#&gt; [[2]]$conditions$n_distinct_less_than_20
+#&gt; [1] TRUE
+#&gt; 
+#&gt; 
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
