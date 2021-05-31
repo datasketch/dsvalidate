@@ -1,8 +1,8 @@
 #' Create advanced dictionary
 #'
-#' An extended/advanced version of the dicionary created by homodatum::create_dic
-#' This could be part of homodatum, potentially integrated in the existing dictionary
-#' function by homodatum::create_dic(..., extended = TRUE).
+#' This is an extended/advanced version of the dicionary created by `homodatum::create_dic`.
+#' Further down the line, this will be moved to `homodatum`, potentially integrated in the
+#' existing dictionary function by `homodatum::create_dic(..., extended = TRUE)`.
 #'
 #' Additionally to the existing id, label, and hdType this should have
 #' - the base R class of the variable (numeric, character, ...)
