@@ -1,86 +1,124 @@
-test_that("requirements validated", {
+test_that("multiple table requirements validated", {
 
   # load requirements
-  folder <- system.file("test_dsvalidate", "ex02-two-categorical-cols-max-distinct-cat", package = "dsvalidate")
-  file_path <- file.path(path,"requirements.yaml")
+  folder <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
+  file_path <- file.path(folder,"requirements.yaml")
   requirements <- yaml::read_yaml(file_path)
 
-  df_fewer_columns <- data.frame(col1 = c(LETTERS[1:19]))
+  # Idea: validate function accepts a single dataframe or a list of dataframes. If there are multiple tables specified
+  # in the requirements.yaml, validate needs to be passed a list of dataframes, otherwise it should raise an error.
 
-  df_num_column <- data.frame(col1 = c(1:20),
-                              col2 = c(rep("A", 10), rep("B", 10)))
+  df <- data.frame(col = c(LETTERS[1:19]))
+  df2 <- data.frame(col1 = c(1:20),
+                    col2 = c(rep("A", 10), rep("B", 10)))
 
-  df_n_distinct_20 <- data.frame(col1 = c(LETTERS[1:20]),
-                                 col2 = c(rep("A", 10), rep("B", 10)))
+  l_df <- list(nodes = df, edges = df2)
+  l_df2 <- list(nodes = df, somethingelse = df2)
 
-  df_n_distinct_19 <- data.frame(col1 = c(LETTERS[1:19]),
-                                 col2 = c(rep("A", 10), rep("B", 9)))
 
-  output_fewer_columns <- validate_requirements(df = df_fewer_columns,
+  output_insufficient_tables <- validate_requirements(df = df,
+                                                      requirements = requirements)
+
+  output_enough_tables <- validate_requirements(df = l_df,
                                                 requirements = requirements)
 
-  output_num_column <- validate_requirements(df = df_num_column,
-                                             requirements = requirements)
+  output_wrong_ids <- validate_requirements(df = l_df2,
+                                            requirements = requirements)
 
-  output_distinct_20 <- validate_requirements(df = df_n_distinct_20,
-                                              requirements = requirements)
+  expect_equal(output_insufficient_tables$table$n_tables, list(met = FALSE,
+                                                         want = 2,
+                                                         is = 1))
 
-  output_distinct_19 <- validate_requirements(df = df_n_distinct_19,
-                                              requirements = requirements)
+  expect_equal(output_insufficient_tables$table$table_ids, list(met = FALSE,
+                                                                want = names(requirements$table),
+                                                                is = NULL))
 
-  # test label output
-  expect_equal(output_fewer_columns$label, "cat_cols_fewer_than_20_distinct")
+  expect_equal(output_wrong_ids$table$table_ids, list(met = FALSE,
+                                                      want = names(requirements$table),
+                                                      is = c("nodes", "somethingelse")))
 
-  # test overall requirements output
-  expect_false(output_fewer_columns$requirements)
-  expect_false(output_num_column$requirements)
-  expect_false(output_distinct_20$requirements)
-  expect_true(output_distinct_19$requirements)
-
-  # test individual conditions
-  expect_false(output_fewer_columns$conditions$n_cols_greater_than_1)
-  expect_true(output_num_column$conditions$n_cols_greater_than_1)
-  expect_true(output_distinct_20$conditions$n_cols_greater_than_1)
-  expect_true(output_distinct_19$conditions$n_cols_greater_than_1)
-
-  expect_null(output_fewer_columns$conditions$hdType_equals_Cat)
-  expect_false(output_num_column$conditions$hdType_equals_Cat)
-  expect_true(output_distinct_20$conditions$hdType_equals_Cat)
-  expect_true(output_distinct_19$conditions$hdType_equals_Cat)
-
-  expect_null(output_fewer_columns$conditions$n_distinct_less_than_20)
-  expect_null(output_num_column$conditions$n_distinct_less_than_20)
-  expect_false(output_distinct_20$conditions$n_distinct_less_than_20)
-  expect_true(output_distinct_19$conditions$n_distinct_less_than_20)
-
-
-  ### the output of validate_requirements would look as follows (not part of test, just here for clarification)
-  expected_output_fewer_columns <- list(label = "cat_cols_fewer_than_20_distinct",
-                                        requirements = FALSE,
-                                        conditions = list(n_cols_greater_than_1 = FALSE,
-                                                          # thought of NULL for hdType and n_distinct requirement: if n_cols condition is not satisfied
-                                                          # the validator stops validating remaining requirements
-                                                          hdType_equals_Cat = NULL,
-                                                          n_distinct_less_than_20 = NULL))
-
-  expected_outpout_num_column <- list(label = "cat_cols_fewer_than_20_distinct",
-                                      requirements = FALSE,
-                                      conditions = list(n_cols_greater_than_1 = TRUE,
-                                                        hdType_equals_Cat = FALSE,
-                                                        # thought of NULL for n_distinct requirement: if hdType condition is not satisfied
-                                                        # the validator stops validating remaining requirements
-                                                        n_distinct_less_than_20 = NULL))
-
-  expected_output_distinct_20 <- list(label = "cat_cols_fewer_than_20_distinct",
-                                      requirements = FALSE,
-                                      conditions = list(n_cols_greater_than_1 = TRUE,
-                                                        hdType_equals_Cat = TRUE,
-                                                        n_distinct_less_than_20 = FALSE))
-
-  expected_output_distinct_19 <- list(label = "cat_cols_fewer_than_20_distinct",
-                                      requirements = TRUE,
-                                      conditions = list(n_cols_greater_than_1 = TRUE,
-                                                        hdType_equals_Cat = TRUE,
-                                                        n_distinct_less_than_20 = TRUE))
+  expect_equal(output_enough_tables$table$n_tables, list(met = TRUE))
+  expect_equal(output_enough_tables$table$table_ids, list(met = TRUE))
 
 })
+
+
+test_that("table specifications validated", {
+
+  # load requirements
+  folder <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
+  file_path <- file.path(folder,"requirements.yaml")
+  requirements <- yaml::read_yaml(file_path)
+
+  df <- data.frame(col = c())
+  df1 <- data.frame(col1 = c(1:20),
+                    col2 = c(rep("A", 10), rep("B", 10)))
+
+  l_df <- list(nodes = df,
+               edges = df1)
+
+  table_id <- "nodes"
+
+  output_too_few_columns <- validate_requirements(df = l_df,
+                                                  requirements = requirements)
+
+  expect_equal(output_too_few_columns[[table_id]]$specs, list(met = FALSE,
+                                                              items = 3,
+                                                              passes = 0,
+                                                              fails = 3))
+
+  expect_equal(output_too_few_columns[[table_id]]$specs$n_cols, list(met = FALSE,
+                                                                     want = requirements$table[[table_id]]$specs$n_cols,
+                                                                     is = 0))
+
+  expect_equal(output_too_few_columns[[table_id]]$specs$n_rows, list(met = FALSE,
+                                                                     want = requirements$table[[table_id]]$specs$n_rows,
+                                                                     is = 0))
+
+  expect_equal(output_too_few_columns[[table_id]]$specs$frType, list(met = FALSE,
+                                                                     want = requirements$table[[table_id]]$specs$frType,
+                                                                     is = frType("")))
+
+})
+
+
+test_that("field requirements validated", {
+
+  # load requirements
+  folder <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
+  file_path <- file.path(folder,"requirements.yaml")
+  requirements <- yaml::read_yaml(file_path)
+
+  df <- data.frame(a = c(1:20),
+                   b = c(rep("A", 10), rep("B", 10)),
+                   c = c(rep("A", 10), rep("B", 10)))
+  f <- homodatum::fringe(df)
+  df1 <- data.frame(col1 = c(1:20),
+                    col2 = c(rep("A", 10), rep("B", 10)))
+  l_df <- list(nodes = df,
+               edges = df1)
+
+  table_id <- "nodes"
+
+  output_check_fields <- validate_requirements(df = l_df,
+                                               requirements = requirements)
+
+  expect_equal(output_check_fields[[table_id]]$specs$frType, list(met = TRUE))
+
+
+  expect_equal(output_check_fields[[table_id]]$fields, list(met = FALSE,
+                                                            items = 3,
+                                                            passes = 2,
+                                                            fails = 1))
+
+  expect_equal(output_check_fields[[table_id]]$fields$id, list(met = TRUE))
+
+  expect_equal(output_check_fields[[table_id]]$fields$label, list(met = FALSE,
+                                                                  req = requirements$table[[table_id]]$fields$label,
+                                                                  want = list(greater_than = 0),
+                                                                  is = 0))
+
+  expect_equal(output_check_fields[[table_id]]$fields$description, list(met = TRUE))
+
+})
+
