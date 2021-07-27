@@ -1,4 +1,4 @@
-test_that("multiple table requirements validated", {
+test_that("table meta validated", {
 
   # load requirements
   folder <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
@@ -16,34 +16,34 @@ test_that("multiple table requirements validated", {
   l_df2 <- list(nodes = df, somethingelse = df2)
 
 
-  output_insufficient_tables <- validate_requirements(df = df,
-                                                      requirements = requirements)
+  output_insufficient_tables <- validate_table_meta(x = df,
+                                                    requirements = requirements)
 
-  output_enough_tables <- validate_requirements(df = l_df,
-                                                requirements = requirements)
+  output_enough_tables <- validate_table_meta(x = l_df,
+                                              requirements = requirements)
 
-  output_wrong_ids <- validate_requirements(df = l_df2,
-                                            requirements = requirements)
+  output_wrong_ids <- validate_table_meta(x = l_df2,
+                                          requirements = requirements)
 
-  expect_equal(output_insufficient_tables$table$n_tables, list(met = FALSE,
+  expect_equal(output_insufficient_tables$n_tables, list(met = FALSE,
                                                                want = 2,
                                                                is = 1))
 
-  expect_equal(output_insufficient_tables$table$table_ids, list(met = FALSE,
+  expect_equal(output_insufficient_tables$table_ids, list(met = FALSE,
                                                                 want = names(requirements$table),
                                                                 is = NULL))
 
-  expect_equal(output_wrong_ids$table$table_ids, list(met = FALSE,
+  expect_equal(output_wrong_ids$table_ids, list(met = FALSE,
                                                       want = names(requirements$table),
                                                       is = c("nodes", "somethingelse")))
 
-  expect_equal(output_enough_tables$table$n_tables, list(met = TRUE))
-  expect_equal(output_enough_tables$table$table_ids, list(met = TRUE))
+  expect_equal(output_enough_tables$n_tables, list(met = TRUE))
+  expect_equal(output_enough_tables$table_ids, list(met = TRUE))
 
 })
 
 
-test_that("table specifications validated", {
+test_that("table specs validated", {
 
   # load requirements
   folder <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
@@ -82,7 +82,7 @@ test_that("table specifications validated", {
 })
 
 
-test_that("field requirements validated", {
+test_that("fields validated", {
 
   # load requirements
   folder <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
