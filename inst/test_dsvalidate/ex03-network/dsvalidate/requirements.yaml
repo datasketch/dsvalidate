@@ -1,0 +1,52 @@
+description: This is a network (with nodes and edges)
+table: 
+  nodes:
+    table_id: nodes # the table name to reference which csv inside a folder to read
+    specs: 
+      n_cols:
+        greater_than: 2
+        less_than: 10
+      n_rows:
+        greater_than: 0
+      frType: 
+        equals: "Num-Cat-Cat"
+        # contains: "Cat-Txt"
+    fields:
+      id:
+        field_id: id
+        specs:
+          hdType:
+            any_of: [Cat, Num]
+          unique: true
+          n_unique:
+            greater_than: 10
+          label: ID of a Node
+          n_cols: 
+            greater_than: 0
+      label:
+        field_id: label
+        specs:
+          hdType: Cat
+          unique: true
+          label: Label of a node
+      description: 
+        field_id: description
+        specs:
+          hdType: Txt
+          label: Description of a Node
+  edges:
+    table_id: edges
+    specs:
+      n_cols: 
+        equals: 2
+      frType:
+        equals: "Cat-Cat"
+    fields: 
+      source:
+        field_id: source
+        specs:
+          hdType: Cat
+      target:
+        field_id: target
+        specs:
+          hdType: Cat

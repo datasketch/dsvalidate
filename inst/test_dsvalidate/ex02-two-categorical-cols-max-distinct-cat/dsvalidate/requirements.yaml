@@ -1,8 +1,0 @@
-- label: cat_cols_fewer_than_20_distinct
-  n_cols: 
-    greater_than: 1
-  conditions_all:
-    hdType:
-      equals: Cat
-    n_distinct:
-      less_than: 20
