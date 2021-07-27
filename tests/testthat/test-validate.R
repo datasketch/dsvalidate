@@ -26,8 +26,8 @@ test_that("multiple table requirements validated", {
                                             requirements = requirements)
 
   expect_equal(output_insufficient_tables$table$n_tables, list(met = FALSE,
-                                                         want = 2,
-                                                         is = 1))
+                                                               want = 2,
+                                                               is = 1))
 
   expect_equal(output_insufficient_tables$table$table_ids, list(met = FALSE,
                                                                 want = names(requirements$table),
