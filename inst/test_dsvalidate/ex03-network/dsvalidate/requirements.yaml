@@ -5,11 +5,10 @@ table:
     specs: 
       n_cols:
         greater_than: 2
-        less_than: 10
       n_rows:
         greater_than: 0
       frType: 
-        equals: "Num-Cat-Cat"
+        contains_all: "Num-Cat-Cat"
         # contains: "Cat-Txt"
     fields:
       id:
@@ -18,7 +17,7 @@ table:
           hdType:
             any_of: [Cat, Num]
           unique: true
-          n_unique:
+          n_distinct:
             greater_than: 10
           label: ID of a Node
           n_cols: 
@@ -40,7 +39,7 @@ table:
       n_cols: 
         equals: 2
       frType:
-        equals: "Cat-Cat"
+        equals_all: "Cat-Cat"
     fields: 
       source:
         field_id: source

@@ -8,7 +8,7 @@ table:
       n_rows:
         greater_than: 0
       frType: 
-        contains: "Cat-Cat"
+        contains_all: "Cat-Cat"
     fields:
       col_max_cat:
         field_id: col_max_cat
