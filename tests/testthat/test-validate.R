@@ -26,16 +26,16 @@ test_that("table meta validated", {
                                           requirements = requirements)
 
   expect_equal(output_insufficient_tables$n_tables, list(met = FALSE,
-                                                               want = 2,
-                                                               is = 1))
+                                                         want = 2,
+                                                         is = 1))
 
   expect_equal(output_insufficient_tables$table_ids, list(met = FALSE,
-                                                                want = names(requirements$table),
-                                                                is = NULL))
+                                                          want = names(requirements$table),
+                                                          is = "none"))
 
   expect_equal(output_wrong_ids$table_ids, list(met = FALSE,
-                                                      want = names(requirements$table),
-                                                      is = c("nodes", "somethingelse")))
+                                                want = names(requirements$table),
+                                                is = c("nodes", "somethingelse")))
 
   expect_equal(output_enough_tables$n_tables, list(met = TRUE))
   expect_equal(output_enough_tables$table_ids, list(met = TRUE))
@@ -59,25 +59,25 @@ test_that("table specs validated", {
 
   table_id <- "nodes"
 
-  output_too_few_columns <- validate_requirements(df = l_df,
-                                                  requirements = requirements)
+  output_too_few_columns <- validate_table_specs(x = l_df,
+                                                 requirements = requirements)
 
   expect_equal(output_too_few_columns[[table_id]]$specs, list(met = FALSE,
                                                               items = 3,
                                                               passes = 0,
                                                               fails = 3))
 
-  expect_equal(output_too_few_columns[[table_id]]$specs$n_cols, list(met = FALSE,
-                                                                     want = requirements$table[[table_id]]$specs$n_cols,
-                                                                     is = 0))
+  expect_equal(output_too_few_columns[[table_id]]$n_cols, list(met = FALSE,
+                                                               want = requirements$table[[table_id]]$specs$n_cols,
+                                                               is = 0))
 
-  expect_equal(output_too_few_columns[[table_id]]$specs$n_rows, list(met = FALSE,
-                                                                     want = requirements$table[[table_id]]$specs$n_rows,
-                                                                     is = 0))
+  expect_equal(output_too_few_columns[[table_id]]$n_rows, list(met = FALSE,
+                                                               want = requirements$table[[table_id]]$specs$n_rows,
+                                                               is = 0))
 
-  expect_equal(output_too_few_columns[[table_id]]$specs$frType, list(met = FALSE,
-                                                                     want = requirements$table[[table_id]]$specs$frType,
-                                                                     is = frType("")))
+  expect_equal(output_too_few_columns[[table_id]]$frType, list(met = FALSE,
+                                                               want = requirements$table[[table_id]]$specs$frType,
+                                                               is = ""))
 
 })
 
