@@ -33,7 +33,7 @@ table:
         field_id: description
         label: Description of a Node
         specs:
-          hdType: Txt
+          hdType: Cat
   edges:
     table_id: edges
     specs:
@@ -50,3 +50,5 @@ table:
         field_id: target
         specs:
           hdType: Cat
+          n_distinct:
+            greater_than: 3
