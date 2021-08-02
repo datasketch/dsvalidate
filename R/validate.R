@@ -19,19 +19,7 @@
 #'
 #' @examples
 create_dic <- function(d, frtype = NULL, extended = FALSE){
-  if(is.null(frtype)){
-    if(is_hdtibble(d)){
-      frtype <- hdtibble_frType(d)
-    }else{
-      frtype <- guess_frType(d)
-    }
-  }
-  if(!is_frType(frtype))
-    frtype <- frType(frtype)
-  ids <- col_ids_from_name(names(d))
-  dic <-tibble::tibble(id = ids,
-                       label = names(d),
-                       hdType = frType_hdTypes(frtype))
+  dic <- homodatum::create_dic(d = d, frtype = frtype)
 
   if(extended == TRUE){
     extended_info <- d %>%
@@ -72,8 +60,12 @@ create_dic <- function(d, frtype = NULL, extended = FALSE){
 #'
 #' @examples
 validate_requirements <- function(x, requirements){
+  output <- list()
+  output$table <- validate_table_meta(x, requirements)
+  output$specs <- validate_table_specs(x, requirements)
+  output$fields <- validate_fields(x, requirements)
 
-
+  output
 }
 
 
