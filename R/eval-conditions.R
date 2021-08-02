@@ -3,6 +3,13 @@ eval_conditions <- function(value1, condition, value2){
           list(value1, value2))
 }
 
+eval <- function(value_is, specs, spec_type) {
+  specification <- specs[[spec_type]]
+  condition <- names(specification)
+  value_want <- specification[[1]]
+  eval_conditions({{value_is}}, condition, value_want)
+}
+
 eval_condition_equals <- function(x, y) x == y
 eval_condition_equals_all <- function(x, y) all(x %in% y) && all(y %in% x)
 eval_condition_not_equals <- function(x, y) x != y
