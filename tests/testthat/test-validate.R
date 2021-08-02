@@ -89,7 +89,7 @@ test_that("fields validated", {
   file_path <- file.path(folder,"requirements.yaml")
   requirements <- yaml::read_yaml(file_path)
 
-  df <- data.frame(a = c(1:20),
+  df <- data.frame(id = c(1:20),
                    b = c(rep("A", 10), rep("B", 10)),
                    c = c(rep("A", 10), rep("B", 10)))
   f <- homodatum::fringe(df)
@@ -100,8 +100,8 @@ test_that("fields validated", {
 
   table_id <- "nodes"
 
-  output_check_fields <- validate_requirements(df = l_df,
-                                               requirements = requirements)
+  output_check_fields <- validate_fields(x = l_df,
+                                         requirements = requirements)
 
   expect_equal(output_check_fields[[table_id]]$specs$frType, list(met = TRUE))
 
@@ -114,9 +114,11 @@ test_that("fields validated", {
   expect_equal(output_check_fields[[table_id]]$fields$id, list(met = TRUE))
 
   expect_equal(output_check_fields[[table_id]]$fields$label, list(met = FALSE,
-                                                                  req = requirements$table[[table_id]]$fields$label,
-                                                                  want = list(greater_than = 0),
-                                                                  is = 0))
+                                                                  id_found = FALSE,
+                                                                  id_required = FALSE,
+                                                                  specs = requirements$table[[table_id]]$fields$label,
+                                                                  want_n_cols = list(greater_than = 0),
+                                                                  is_n_cols = 0))
 
   expect_equal(output_check_fields[[table_id]]$fields$description, list(met = TRUE))
 
