@@ -93,14 +93,14 @@ test_that("fields validated", {
                    b = c(rep("A", 10), rep("B", 10)),
                    c = c(rep("A", 10), rep("B", 10)))
   f <- homodatum::fringe(df)
-  df1 <- data.frame(col1 = c(1:20),
+  df1 <- data.frame(col1 = c(rep("A", 5), rep("B", 5), rep("C", 10)),
                     col2 = c(rep("A", 10), rep("B", 10)))
-  l_df <- list(nodes = df,
-               edges = df1)
+  x <- list(nodes = df,
+            edges = df1)
 
   table_id <- "nodes"
 
-  output_check_fields <- validate_fields(x = l_df,
+  output_check_fields <- validate_fields(x = x,
                                          requirements = requirements)
 
   expect_equal(output_check_fields[[table_id]]$specs$frType, list(met = TRUE))
