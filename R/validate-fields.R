@@ -17,24 +17,21 @@ validate_fields <- function(x, requirements){
       .x
     })
 
-    # Order field specs so that loop starts with those that need matching field id
-    field_ids_ordered <- fields %>%
-      purrr::map_df("id_required") %>%
-      tidyr::pivot_longer(cols = everything()) %>%
-      dplyr::arrange(desc(value)) %>%
-      dplyr::select(-value) %>%
-      dplyr::pull(name)
+    field_ids <- names(fields)
 
     columns_used <- c()
 
     output_table <- list()
 
-    for(field_id in field_ids_ordered){
+    fields_checked <- field_ids %>% purrr::map(function(field_id){
 
       field <- fields[[field_id]]
       id_required <- field$id_required
       want_n_cols <- field$n_cols
       if(!is.list(want_n_cols)) want_n_cols <- list(equals = want_n_cols)
+
+      n_cols_needed <- want_n_cols[[1]]
+      if(names(want_n_cols) == "greater_than") n_cols_needed <- n_cols_needed + 1
 
       specs <- field$specs
 
@@ -59,19 +56,66 @@ validate_fields <- function(x, requirements){
       equals_required_id <- field_validated$matches_id
       id_found <- any(equals_required_id)
 
+      # Difference between number of columns that satisfy requirement and number of columns needed
+      diff_want_is <- NULL
+      if(id_required){
+        diff_want_is <- -1
+        if(id_found){
+          id_meets_requirements <- field_validated[equals_required_id,]$meets_requirement
+          if(id_meets_requirements){
+            diff_want_is <- 0
+          }
+        }
+      } else {
+        specs_met <- field_validated$meets_requirement
+        n_cols_meet_requirement <- sum(specs_met)
+
+        diff_want_is <- n_cols_meet_requirement - n_cols_needed
+      }
+
+      field$field_validated <- field_validated
+      field$diff_want_is <- diff_want_is
+      field
+    }) %>% purrr::set_names(field_ids)
+
+
+    # Order field specs so that loop starts with those where just enough columns satisfy requirement
+    field_order <- fields_checked %>%
+      purrr::map_df("diff_want_is") %>%
+      tidyr::pivot_longer(cols = everything()) %>%
+      dplyr::arrange(value) %>%
+      dplyr::select(-value) %>%
+      dplyr::pull(name)
+
+    fields_ordered <- fields_checked[field_order]
+
+    for(field in fields_ordered){
+
       met <- FALSE
       is_n_cols <- 0
       use_cols <- NULL
+      diff_want_is <- NULL
       if(id_required){
+        diff_want_is <- -1
         if(id_found){
           id_meets_requirements <- field_validated[equals_required_id,]$meets_requirement
           met <- id_meets_requirements
           is_n_cols <- 1
           use_cols <- field_id
+          diff_want_is <- 0
         }
       } else {
         specs_met <- field_validated$meets_requirement
         cols_specs_met <- field_validated[specs_met,]$id
+
+        n_cols_meet_requirement <- sum(specs_met)
+        n_cols_needed <- want_n_cols[[1]]
+        if(names(want_n_cols) == "greater_than") n_cols_needed <- n_cols_needed + 1
+
+        diff_want_is <- n_cols_meet_requirement - n_cols_needed
+
+
+
         col_used_in_other_requirement <- intersect(cols_specs_met, columns_used)
         col_not_used_in_other_requirement <- cols_specs_met[!cols_specs_met %in% col_used_in_other_requirement]
 
