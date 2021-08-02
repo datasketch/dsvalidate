@@ -9,7 +9,6 @@ validate_fields <- function(x, requirements){
     dic <- create_dic(table, extended = TRUE)
 
     fields <- requirements$table[[table_id]]$fields
-    field_ids <- names(fields)
 
     # If n_cols greater than 0 has been left out as short-cut it is added here
     fields <- fields %>% purrr::map(function(.x){
@@ -18,9 +17,21 @@ validate_fields <- function(x, requirements){
       .x
     })
 
-    specs_checked <- field_ids %>% purrr::map(function(.x){
+    # Order field specs so that loop starts with those that need matching field id
+    field_ids_ordered <- fields %>%
+      purrr::map_df("id_required") %>%
+      tidyr::pivot_longer(cols = everything()) %>%
+      dplyr::arrange(desc(value)) %>%
+      dplyr::select(-value) %>%
+      dplyr::pull(name)
 
-      field <- fields[[.x]]
+    columns_used <- c()
+
+    output_table <- list()
+
+    for(field_id in field_ids_ordered){
+
+      field <- fields[[field_id]]
       id_required <- field$id_required
       want_n_cols <- field$n_cols
       if(!is.list(want_n_cols)) want_n_cols <- list(equals = want_n_cols)
@@ -38,13 +49,14 @@ validate_fields <- function(x, requirements){
       field_validated <- dic_selected %>%
         dplyr::mutate(dplyr::across(!id,  ~ eval(., specs, dplyr::cur_column()))) %>%
         dplyr::rowwise() %>%
-        dplyr::mutate("met_{.x}" := all(dplyr::c_across(!id))) %>%
-        dplyr::select(id, dplyr::starts_with("met_")) %>%
-        dplyr::mutate("met_id_{.x}" := id == .x)
+        dplyr::mutate(meets_requirement = all(dplyr::c_across(!id))) %>%
+        dplyr::select(id, meets_requirement) %>%
+        dplyr::mutate(matches_id = id == field_id)
 
-      use_ids <- NULL
+      use_cols <- NULL
+      col_used_in_other_requirement <- NULL
 
-      equals_required_id <- field_validated[[paste0("met_id_", .x)]]
+      equals_required_id <- field_validated$matches_id
       id_found <- any(equals_required_id)
 
       met <- FALSE
@@ -52,47 +64,45 @@ validate_fields <- function(x, requirements){
       use_cols <- NULL
       if(id_required){
         if(id_found){
-          id_meets_requirements <- field_validated[equals_required_id,][[paste0("met_", .x)]]
+          id_meets_requirements <- field_validated[equals_required_id,]$meets_requirement
           met <- id_meets_requirements
           is_n_cols <- 1
-          use_cols <- .x
+          use_cols <- field_id
         }
       } else {
-        specs_met <- field_validated[[paste0("met_", .x)]]
-        is_n_cols <- sum(specs_met)
+        specs_met <- field_validated$meets_requirement
+        cols_specs_met <- field_validated[specs_met,]$id
+        col_used_in_other_requirement <- intersect(cols_specs_met, columns_used)
+        col_not_used_in_other_requirement <- cols_specs_met[!cols_specs_met %in% col_used_in_other_requirement]
+
+        is_n_cols <- length(col_not_used_in_other_requirement)
 
         sufficient_n_cols <- eval_conditions(is_n_cols, names(want_n_cols), want_n_cols[[1]])
         if(sufficient_n_cols){
           met <- TRUE
-          use_cols <- field_validated[specs_met,]$id
+          use_cols <- field_validated[specs_met,]$id[1:(want_n_cols[[1]]+1)]
+          col_used_in_other_requirement <- NULL
+        } else {
+          if(length(col_used_in_other_requirement) == 0) {
+            col_used_in_other_requirement <- NULL
+          }
         }
-
       }
 
-      list(met = met,
-           id_found = id_found,
-           id_required = id_required,
-           specs = specs,
-           want_n_cols = want_n_cols,
-           is_n_cols = is_n_cols,
-           col_used_multiple = NULL,
-           use_cols = use_cols)
+      columns_used <- unique(c(columns_used, use_cols))
 
-    }) %>% purrr::set_names(field_ids)
+      output_table[[field_id]] <- list(met = met,
+                                       id_found = id_found,
+                                       id_required = id_required,
+                                       specs = specs,
+                                       want_n_cols = want_n_cols,
+                                       is_n_cols = is_n_cols,
+                                       use_cols = use_cols,
+                                       col_used_in_other_requirement = col_used_in_other_requirement)
 
-    columns_required_by_multiple_specs <- specs_checked %>%
-      purrr::map(`[`, "use_cols") %>%
-      purrr::map(1) %>%
-      purrr::reduce(intersect)
-
-    output <- specs_checked
-    if(!is.null(columns_required_by_multiple_specs)){
-      output <- specs_checked %>% purrr::map(function(.x){
-        col_used_multiple <- intersect(columns_required_by_multiple_specs, .x$use_cols)
-        if(length(col_used_multiple) > 0) .x$output$met <- FALSE; .x$output$col_used_multiple <- col_used_multiple
-        .x$output
-      })
     }
+
+    output[[table_id]] <- output_table
   }
 
   output
