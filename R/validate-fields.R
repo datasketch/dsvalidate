@@ -73,6 +73,7 @@ validate_fields <- function(x, requirements){
         diff_want_is <- n_cols_meet_requirement - n_cols_needed
       }
 
+      field$id_found <- id_found
       field$field_validated <- field_validated
       field$diff_want_is <- diff_want_is
       field
@@ -91,6 +92,15 @@ validate_fields <- function(x, requirements){
 
     for(field in fields_ordered){
 
+      field_id <- field$field_id
+      id_required <- field$id_required
+      field_validated <- field$field_validated
+      want_n_cols <- field$n_cols
+      specs <- field$specs
+
+      equals_required_id <- field_validated$matches_id
+      id_found <- any(equals_required_id)
+
       met <- FALSE
       is_n_cols <- 0
       use_cols <- NULL
@@ -107,14 +117,6 @@ validate_fields <- function(x, requirements){
       } else {
         specs_met <- field_validated$meets_requirement
         cols_specs_met <- field_validated[specs_met,]$id
-
-        n_cols_meet_requirement <- sum(specs_met)
-        n_cols_needed <- want_n_cols[[1]]
-        if(names(want_n_cols) == "greater_than") n_cols_needed <- n_cols_needed + 1
-
-        diff_want_is <- n_cols_meet_requirement - n_cols_needed
-
-
 
         col_used_in_other_requirement <- intersect(cols_specs_met, columns_used)
         col_not_used_in_other_requirement <- cols_specs_met[!cols_specs_met %in% col_used_in_other_requirement]
