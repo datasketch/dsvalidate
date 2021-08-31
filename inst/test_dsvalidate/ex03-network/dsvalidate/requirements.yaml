@@ -51,4 +51,4 @@ table:
         specs:
           hdType: Cat
           n_distinct:
-            greater_than: 3
+            greater_than: 2
