@@ -111,16 +111,25 @@ test_that("fields validated", {
                                                             passes = 2,
                                                             fails = 1))
 
-  expect_equal(output_check_fields[[table_id]]$fields$id, list(met = TRUE))
+  expect_equal(output_check_fields[[table_id]]$id$met, TRUE)
 
-  expect_equal(output_check_fields[[table_id]]$fields$label, list(met = FALSE,
-                                                                  id_found = FALSE,
-                                                                  id_required = FALSE,
-                                                                  specs = requirements$table[[table_id]]$fields$label,
-                                                                  want_n_cols = list(greater_than = 0),
-                                                                  is_n_cols = 0))
+  expect_equal(output_check_fields[[table_id]]$label, list(met = FALSE,
+                                                           id_found = FALSE,
+                                                           id_required = FALSE,
+                                                           specs = requirements$table[[table_id]]$fields$label$specs,
+                                                           want_n_cols = list(greater_than = 0),
+                                                           is_n_cols = 0,
+                                                           use_cols = NULL,
+                                                           col_used_in_other_requirement = NULL))
 
-  expect_equal(output_check_fields[[table_id]]$fields$description, list(met = TRUE))
+  expect_equal(output_check_fields[[table_id]]$description, list(met = TRUE,
+                                                                 id_found = FALSE,
+                                                                 id_required = FALSE,
+                                                                 specs = requirements$table[[table_id]]$fields$description$specs,
+                                                                 want_n_cols = list(greater_than = 0),
+                                                                 is_n_cols = 2,
+                                                                 use_cols = "b",
+                                                                 col_used_in_other_requirement = NULL))
 
 })
 
