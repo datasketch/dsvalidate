@@ -17,6 +17,27 @@ col_ids_from_name <- function (x, sep = "_"){
 
 }
 
+validated <- function(want, is){
+  validation(met = TRUE)
+}
+
+not_validated <- function(want, is){
+  validation(met = FALSE,
+             want = want,
+             is = is)
+}
+
+validation <- function(met, want, is){
+  if(met){
+    list(met = TRUE)
+  } else {
+    list(met = FALSE,
+         want = want,
+         is = is)
+  }
+}
+
+
 remove_accents <- function (string) {
   accents <- "àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝäëïöüÄËÏÖÜâêîôûÂÊÎÔÛñÑç"
   translation <- "aeiouAEIOUaeiouyAEIOUYaeiouAEIOUaeiouAEIOUnNc"
