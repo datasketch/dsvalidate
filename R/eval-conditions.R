@@ -11,13 +11,13 @@ eval <- function(value_is, specs, spec_type) {
 }
 
 eval_condition_equals <- function(x, y) x == y
-eval_condition_equals_all <- function(x, y) all(x %in% y) && all(y %in% x)
+eval_condition_equals_all <- function(x, y) (all(x %in% y) & all(y %in% x)) & length(x) == length(y)
 eval_condition_not_equals <- function(x, y) x != y
 eval_condition_is_any_of <- function(x, y) x %in% y
 eval_condition_is_none_of <- function(x, y) !x %in% y
 eval_condition_has <- function(x, y) !is.null(x) && y %in% x
 eval_condition_contains  <- function(x, y) grepl(y, x)
-eval_condition_contains_all <- function(x, y) all(x %in% y)
+eval_condition_contains_all <- function(x, y) all(y %in% x) & length(y) <= length(x)
 eval_condition_any_contains  <- function(x, y) any(grepl(y, x))
 eval_condition_contained_in  <- function(x, y) grepl(x, y)
 eval_condition_contained_in_all_of  <- function(x, y) all(grepl(x, y))
