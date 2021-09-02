@@ -4,17 +4,18 @@
 \alias{validate_requirements}
 \title{Validate dataframe for requirements}
 \usage{
-validate_requirements(df, requirements)
+validate_requirements(x, requirements)
 }
 \arguments{
-\item{df}{Dataframe to be validated}
+\item{x}{Dataframe or list of dataframes to be validated}
 
 \item{requirements}{List of requirements to be validated}
 }
 \value{
-List object which returns for each requirement whether it df satisfies it,
+List object which returns for each requirement whether it x satisfies it,
 using label param passed as part of requirements
 }
 \description{
-Validates whether a given df has the necessary requirements.
+Validates whether a given dataframe of list of dataframes meets the requirements
+specified in \code{requirements}
 }
