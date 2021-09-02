@@ -1,4 +1,6 @@
-validate_table_specs <- function(x, requirements){
+validate_table_specs <- function(x, requirements, validated_table_meta = TRUE){
+
+  if(!validated_table_meta) return(NULL)
 
   output <- list()
 
@@ -16,8 +18,15 @@ validate_table_specs <- function(x, requirements){
     output[[table_id]]$frType <- validate_frType(table = table, specs_frType = specs$frType,
                                                  validated_n_cols = output[[table_id]]$n_cols$met,
                                                  validated_n_rows = output[[table_id]]$n_rows$met)
+
+    output[[table_id]]$all_table_requirements_met <- all(output[[table_id]]$n_cols$met,
+                                                         output[[table_id]]$n_rows$met,
+                                                         output[[table_id]]$frType$met)
   }
 
+  requirements_met <- output %>% purrr::map_lgl(~.x$all_table_requirements_met) %>% unlist()
+
+  output$all_requirements_met <- all(requirements_met)
   output
 }
 
