@@ -2,3 +2,4 @@
 
 export(requirements_load)
 export(validate_requirements)
+importFrom(dplyr,"%>%")

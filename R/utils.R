@@ -1,3 +1,5 @@
+#' @importFrom dplyr %>%
+
 col_ids_from_name <- function (x, sep = "_"){
   x <- gsub("[^[:alnum:]]", "_", x)
   x <- remove_accents(x)
