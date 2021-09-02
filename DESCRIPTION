@@ -25,6 +25,7 @@ Depends:
     validate
 Imports:
     tidyverse,
+    purrr,
     homodatum
 Suggests: 
     testthat (>= 2.1.0)
