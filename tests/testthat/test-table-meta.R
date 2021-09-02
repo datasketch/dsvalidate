@@ -92,7 +92,7 @@ test_that("table ids validated", {
 test_that("table meta validated", {
 
   # load requirements
-  path <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
+  path <- system.file("test_dsvalidate", "ex02-network", "dsvalidate", package = "dsvalidate")
   requirements <- requirements_load(path = path)
 
   df <- data.frame(col = c(LETTERS[1:19]))

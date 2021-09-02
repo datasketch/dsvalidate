@@ -1,6 +1,6 @@
 test_that("data validated", {
 
-  path <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
+  path <- system.file("test_dsvalidate", "ex02-network", "dsvalidate", package = "dsvalidate")
   requirements <- requirements_load(path = path)
 
   df <- data.frame(id = c(1:20),

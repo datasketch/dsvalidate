@@ -118,7 +118,7 @@ test_that("frType validated", {
 
 test_that("table specs validated", {
 
-  path <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
+  path <- system.file("test_dsvalidate", "ex02-network", "dsvalidate", package = "dsvalidate")
   requirements <- requirements_load(path = path)
 
   df <- data.frame(col = c())
