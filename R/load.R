@@ -36,12 +36,48 @@ requirements_load <- function(path = "dsvalidate", filename = "requirements.yaml
     if(any(!c("table_id", "specs", "fields") %in% names(requirements$table[[.x]]))) stop("All table requirements must include table_id, specs, and fields.")
   })
 
+  # Stop if missing table requirements and make greater_than 0 default if no n_cols or n_rows specification
   requirements$table <- requirements$table %>% purrr::map(function(.x){
     if(any(!c("table_id", "specs", "fields") %in% names(.x))) stop("All table requirements must include table_id, specs, and fields.")
     if(!"n_cols" %in% names(.x$specs)) .x$specs$n_cols <- list(greater_than = 0)
     if(!"n_rows" %in% names(.x$specs)) .x$specs$n_rows <- list(greater_than = 0)
+
+    .x$fields <- check_fields(.x$field)
     .x
   })
 
   requirements
 }
+
+
+
+check_fields <- function(fields){
+  fields %>% purrr::map(function(.x){
+    .x$n_cols <- check_req_n_cols(n_cols = .x$n_cols)
+    .x$specs <- check_specs(specs = .x$specs)
+    if(is.null(.x$id_required)) .x$id_required <- FALSE
+    .x
+  })
+}
+
+
+check_specs <- function(specs){
+  if(is.null(specs)) stop("Column specs missing.")
+  # If `equals` has been left out as short-cut it is added here
+  for(specs_type in names(specs)){
+    specification <- specs[[specs_type]]
+    if(!is.list(specification)) specs[[specs_type]] <- list(equals = specification)
+  }
+
+  specs
+}
+
+
+check_req_n_cols <- function(n_cols){
+  # If n_cols is null, must be greater than 0
+  if(is.null(n_cols)) n_cols <- list(greater_than = 0)
+  # If n_cols greater than 0 has been left out as short-cut it is added here
+  if(!is.list(n_cols)) n_cols <- list(equals = n_cols)
+  n_cols
+}
+
