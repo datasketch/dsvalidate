@@ -1,5 +1,7 @@
 #' Create advanced dictionary
 #'
+#' TODO integrate into homodatum's create_dic!!!!
+#'
 #' This is an extended/advanced version of the dicionary created by `homodatum::create_dic`.
 #' Further down the line, this will be moved to `homodatum`, potentially integrated in the
 #' existing dictionary function by `homodatum::create_dic(..., extended = TRUE)`.
@@ -12,12 +14,10 @@
 #' - number of missing values
 #' - anything else?
 #'
-#' @param df
+#' @param df Dataframe or tibble for which to create dictionary
 #'
 #' @return Dataframe with dictionary for df
 #' @export
-#'
-#' @examples
 create_dic <- function(d, frtype = NULL, extended = FALSE){
   dic <- homodatum::create_dic(d = d, frtype = frtype)
 
@@ -61,9 +61,18 @@ create_dic <- function(d, frtype = NULL, extended = FALSE){
 #' @examples
 validate_requirements <- function(x, requirements){
   output <- list()
+
   output$table <- validate_table_meta(x, requirements)
-  output$specs <- validate_table_specs(x, requirements)
-  output$fields <- validate_fields(x, requirements)
+
+  output$specs <- validate_table_specs(x, requirements,
+                                       validated_table_meta = output$table$all_requirements_met)
+
+  output$fields <- validate_fields(x, requirements,
+                                   validated_table_meta = output$table$all_requirements_met,
+                                   validated_table_specs = output$specs$all_requirements_met)
+
+  requirements_met <- output %>% purrr::map_lgl(~.x$all_requirements_met) %>% unlist()
+  output$all_requirements_met <- all(requirements_met)
 
   output
 }
