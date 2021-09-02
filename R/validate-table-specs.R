@@ -1,3 +1,15 @@
+#' Validate table specifications
+#'
+#' Validates each table specification by checking tables for
+#'
+#' * number of columns
+#' * number of rows
+#' * frTypes
+#'
+#' @param x Dataframe or list of dataframe
+#' @param requirements List of requirements
+#'
+#' @return List of validations
 validate_table_specs <- function(x, requirements, validated_table_meta = TRUE){
 
   if(!validated_table_meta) return(NULL)

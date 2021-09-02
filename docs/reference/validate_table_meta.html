@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Validate dataframe or list of dataframes for requirements — validate_requirements • dsvalidate</title>
+<title>Validate table meta data — validate_table_meta • dsvalidate</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Validate dataframe or list of dataframes for requirements — validate_requirements" />
-<meta property="og:description" content="Validates whether a given dataframe of list of dataframes meets the requirements
-specified in requirements" />
+<meta property="og:title" content="Validate table meta data — validate_table_meta" />
+<meta property="og:description" content="Validates input data for" />
 
 
 
@@ -112,34 +111,42 @@ specified in requirements" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Validate dataframe or list of dataframes for requirements</h1>
-    <small class="dont-index">Source: <a href='https://github.com/datasketch/dsvalidate/blob/master/R/validate.R'><code>R/validate.R</code></a></small>
-    <div class="hidden name"><code>validate_requirements.Rd</code></div>
+    <h1>Validate table meta data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/datasketch/dsvalidate/blob/master/R/validate-table-meta.R'><code>R/validate-table-meta.R</code></a></small>
+    <div class="hidden name"><code>validate_table_meta.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Validates whether a given dataframe of list of dataframes meets the requirements
-specified in <code>requirements</code></p>
+    <p>Validates input data for</p>
     </div>
 
-    <pre class="usage"><span class='fu'>validate_requirements</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>requirements</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>validate_table_meta</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>requirements</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Dataframe or list of dataframes to be validated</p></td>
+      <td><p>Dataframe or list of dataframe</p></td>
     </tr>
     <tr>
       <th>requirements</th>
-      <td><p>List of requirements to be validated</p></td>
+      <td><p>List of requirements</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>List object which returns for each requirement whether x satisfies it</p>
+    <p>List of validations</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    
+<ul>
+<li><p>data type</p></li>
+<li><p>number of tables</p></li>
+<li><p>table ids (names)</p></li>
+</ul>
+
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

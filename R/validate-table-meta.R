@@ -1,3 +1,15 @@
+#' Validate table meta data
+#'
+#' Validates input data for
+#'
+#' * data type
+#' * number of tables
+#' * table ids (names)
+#'
+#' @param x Dataframe or list of dataframe
+#' @param requirements List of requirements
+#'
+#' @return List of validations
 validate_table_meta <- function(x, requirements){
 
   output <- list()

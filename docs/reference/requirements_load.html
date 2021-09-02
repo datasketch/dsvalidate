@@ -124,7 +124,7 @@ errors and warnings if necessary, and prepares it for use by
 validate_requirements.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>requirements_load</span><span class='op'>(</span>path <span class='op'>=</span> <span class='st'>"dsvalidate"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>requirements_load</span><span class='op'>(</span>path <span class='op'>=</span> <span class='st'>"dsvalidate"</span>, filename <span class='op'>=</span> <span class='st'>"requirements.yaml"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -133,96 +133,16 @@ validate_requirements.</p>
       <th>path</th>
       <td><p>Path for the requirements.yaml file; default is 'dsvalidate'</p></td>
     </tr>
+    <tr>
+      <th>filename</th>
+      <td><p>Filename of requirements file, default is 'requirements.yaml'</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>List of requirements</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The list obtained from the requirements.yaml file is a list with a sublist
-for each requirement. Sublists (requirements are connected with logical AND).</p>
-<p>TODO: Would be good to enable AND and OR logic for requirements</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Example 1: Need 2+ columns in total AND need at least one categorical column.</span>
-<span class='co'># The logic behind the requirements in the yaml file is:</span>
-<span class='co'># - requirement 1: number of columns needs to be greater than 1</span>
-<span class='co'># - requirement 2: number of columns where hdType is equal to Cat needs to be greater than 0</span>
-<span class='va'>file_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"test_dsvalidate"</span>, <span class='st'>"ex01-two-columns-one-categorical"</span>,<span class='st'>"dsvalidate"</span>, package <span class='op'>=</span> <span class='st'>"dsvalidate"</span><span class='op'>)</span>
-<span class='va'>req1</span> <span class='op'>&lt;-</span> <span class='fu'>yaml</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/yaml/man/read_yaml.html'>read_yaml</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>file_path</span>, <span class='st'>"requirements.yaml"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: incomplete final line found on 'C:/Users/lena.mangold/AppData/Local/Temp/Rtmp0W1e6n/temp_libpath63887dc936db/dsvalidate/test_dsvalidate/ex01-two-columns-one-categorical/dsvalidate/requirements.yaml'</span></div><div class='input'><span class='va'>req1</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [[1]]$label
-#&gt; [1] "at_least_two_columns"
-#&gt; 
-#&gt; [[1]]$n_cols
-#&gt; [[1]]$n_cols$greater_than
-#&gt; [1] 1
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; [[2]]
-#&gt; [[2]]$label
-#&gt; [1] "at_least_one_categorical_column"
-#&gt; 
-#&gt; [[2]]$n_cols
-#&gt; [[2]]$n_cols$greater_than
-#&gt; [1] 0
-#&gt; 
-#&gt; 
-#&gt; [[2]]$condition
-#&gt; [[2]]$condition$hdType
-#&gt; [[2]]$condition$hdType$equals
-#&gt; [1] "Cat"
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; </div><div class='input'>
-<span class='co'># Example 2: Need 2+ columns in total with fewer than 20 categories each</span>
-<span class='co'># The logic behind the requirements in the yaml file is:</span>
-<span class='co'># - number of columns where hdType is equal to Cat and n_distinct is less than 20 needs to be greater than 1</span>
-<span class='va'>file_path</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"test_dsvalidate"</span>, <span class='st'>"ex02-two-categorical-cols-max-distinct-cat"</span>,<span class='st'>"dsvalidate"</span>, package <span class='op'>=</span> <span class='st'>"dsvalidate"</span><span class='op'>)</span>
-<span class='va'>req2</span> <span class='op'>&lt;-</span> <span class='fu'>yaml</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/yaml/man/read_yaml.html'>read_yaml</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='va'>file_path</span>, <span class='st'>"requirements.yaml"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: incomplete final line found on 'C:/Users/lena.mangold/AppData/Local/Temp/Rtmp0W1e6n/temp_libpath63887dc936db/dsvalidate/test_dsvalidate/ex02-two-categorical-cols-max-distinct-cat/dsvalidate/requirements.yaml'</span></div><div class='input'><span class='va'>req2</span>
-</div><div class='output co'>#&gt; [[1]]
-#&gt; [[1]]$label
-#&gt; [1] "cat_cols_fewer_than_20_distinct"
-#&gt; 
-#&gt; [[1]]$n_cols
-#&gt; [[1]]$n_cols$greater_than
-#&gt; [1] 1
-#&gt; 
-#&gt; 
-#&gt; [[1]]$conditions_all
-#&gt; [[1]]$conditions_all$hdType
-#&gt; [[1]]$conditions_all$hdType$equals
-#&gt; [1] "Cat"
-#&gt; 
-#&gt; 
-#&gt; [[1]]$conditions_all$n_distinct
-#&gt; [[1]]$conditions_all$n_distinct$less_than
-#&gt; [1] 20
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; 
-#&gt; [[2]]
-#&gt; [[2]]$label
-#&gt; [1] "cat_cols_fewer_than_20_distinct"
-#&gt; 
-#&gt; [[2]]$requirements
-#&gt; [1] TRUE
-#&gt; 
-#&gt; [[2]]$conditions
-#&gt; [[2]]$conditions$hdType_equals_Cat
-#&gt; [1] TRUE
-#&gt; 
-#&gt; [[2]]$conditions$n_distinct_less_than_20
-#&gt; [1] TRUE
-#&gt; 
-#&gt; 
-#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

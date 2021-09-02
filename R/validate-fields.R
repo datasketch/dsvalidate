@@ -1,3 +1,13 @@
+#' Validate fields
+#'
+#' For each table, validates all field specifications
+#'
+#' @param x Dataframe or list of dataframe
+#' @param requirements List of requirements
+#' @param validated_table_meta Boolean, whether or not table meta requirements were met
+#' @param validated_table_specs Boolean, whether or not table specs requirements were met
+#'
+#' @return List of validations
 validate_fields <- function(x, requirements, validated_table_meta = TRUE, validated_table_specs = TRUE){
 
   if(!validated_table_meta | !validated_table_specs) return(NULL)

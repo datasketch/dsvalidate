@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Validate dataframe or list of dataframes for requirements — validate_requirements • dsvalidate</title>
+<title>Check field requirements — check_field_requirements • dsvalidate</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,8 @@
 
 
 
-<meta property="og:title" content="Validate dataframe or list of dataframes for requirements — validate_requirements" />
-<meta property="og:description" content="Validates whether a given dataframe of list of dataframes meets the requirements
-specified in requirements" />
+<meta property="og:title" content="Check field requirements — check_field_requirements" />
+<meta property="og:description" content="Create list of validated field requirements (before checking against OTHER field requirements)" />
 
 
 
@@ -112,34 +111,33 @@ specified in requirements" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Validate dataframe or list of dataframes for requirements</h1>
-    <small class="dont-index">Source: <a href='https://github.com/datasketch/dsvalidate/blob/master/R/validate.R'><code>R/validate.R</code></a></small>
-    <div class="hidden name"><code>validate_requirements.Rd</code></div>
+    <h1>Check field requirements</h1>
+    <small class="dont-index">Source: <a href='https://github.com/datasketch/dsvalidate/blob/master/R/validate-fields.R'><code>R/validate-fields.R</code></a></small>
+    <div class="hidden name"><code>check_field_requirements.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Validates whether a given dataframe of list of dataframes meets the requirements
-specified in <code>requirements</code></p>
+    <p>Create list of validated field requirements (before checking against OTHER field requirements)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>validate_requirements</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>requirements</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>check_field_requirements</span><span class='op'>(</span><span class='va'>field</span>, <span class='va'>dic</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Dataframe or list of dataframes to be validated</p></td>
+      <th>field</th>
+      <td><p>Field requirements</p></td>
     </tr>
     <tr>
-      <th>requirements</th>
-      <td><p>List of requirements to be validated</p></td>
+      <th>dic</th>
+      <td><p>Extended dictionary</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>List object which returns for each requirement whether x satisfies it</p>
+    <p>List of checked field requirements</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

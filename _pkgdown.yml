@@ -1,0 +1,23 @@
+reference:
+- title: "Validate requirements"
+  desc: "Function to validate all requirements."
+- contents:
+  - validate_requirements
+- title: "Validate sub-requirements"
+  desc: "Functions to validate all sub-requirements (format and existence of tables, table specification for each table, required fields for each table) that put together make up the main validation function."
+- contents:
+  - validate_table_meta
+  - validate_table_specs
+  - validate_fields
+- title: "Load"
+  desc: "Function to load in list of requirements from requirements.yaml."
+- contents:
+  - requirements_load
+- title: "Helper functions"
+  desc: "Functions that help validation functions (`create_dic` needs to be moved to homodatum)."
+- contents:
+  - validate_columns
+  - create_dic
+  - check_field_requirements
+  - get_diff_want_is
+  - order_fields
