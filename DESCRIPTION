@@ -1,6 +1,6 @@
 Package: dsvalidate
 Title: Validate data for DS apps
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: c( 
     person(given = "Juan Pablo",
            family = "Marin Diaz",
