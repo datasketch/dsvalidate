@@ -1,3 +1,23 @@
+test_that("columns validated", {
+  df <- data.frame(id = c(1:20),
+                   b = c(rep("A", 10), rep("B", 10)),
+                   c = c(rep("A", 10), rep("B", 10)))
+  f <- homodatum::fringe(df)
+  dic <- create_dic(df, extended = TRUE)
+
+  specs <- list(hdType = list(is_any_of = c("Cat", "Num")),
+                unique = list(equals = TRUE),
+                n_distinct = list(greater_than = 10))
+
+  expected_output <- dplyr::tibble(id = names(df),
+                                   meets_requirement = c(TRUE, FALSE, FALSE),
+                                   matches_id = c(FALSE, TRUE, FALSE))
+
+  actual_output <- validate_columns(dic, specs, field_id = "b")
+
+  expect_equal(actual_output, expected_output)
+
+})
 
 test_that("fields validated", {
 
@@ -29,18 +49,12 @@ test_that("fields validated", {
                                                               id_required = FALSE,
                                                               specs = checked_fields$label$specs,
                                                               req_n_cols = list(greater_than = 0),
-                                                              is_n_cols = 0,
+                                                              n_columns_available = 0,
                                                               use_cols = NULL,
                                                               col_used_in_other_requirement = NULL))
 
   expect_equal(output_validate_fields[[table_id]]$description, list(met = TRUE,
-                                                                    id_found = FALSE,
-                                                                    id_required = FALSE,
-                                                                    specs = checked_fields$description$specs,
-                                                                    req_n_cols = list(greater_than = 0),
-                                                                    is_n_cols = 2,
-                                                                    use_cols = "b",
-                                                                    col_used_in_other_requirement = NULL))
+                                                                    use_cols = "b"))
 
 })
 
