@@ -7,17 +7,19 @@
 create_dic(d, frtype = NULL, extended = FALSE)
 }
 \arguments{
-\item{df}{}
+\item{df}{Dataframe or tibble for which to create dictionary}
 }
 \value{
 Dataframe with dictionary for df
 }
 \description{
+TODO integrate into homodatum's create_dic!!!!
+}
+\details{
 This is an extended/advanced version of the dicionary created by \code{homodatum::create_dic}.
 Further down the line, this will be moved to \code{homodatum}, potentially integrated in the
 existing dictionary function by \code{homodatum::create_dic(..., extended = TRUE)}.
-}
-\details{
+
 Additionally to the existing id, label, and hdType this should have
 \itemize{
 \item the base R class of the variable (numeric, character, ...)

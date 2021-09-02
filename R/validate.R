@@ -17,7 +17,6 @@
 #' @param df Dataframe or tibble for which to create dictionary
 #'
 #' @return Dataframe with dictionary for df
-#' @export
 create_dic <- function(d, frtype = NULL, extended = FALSE){
   dic <- homodatum::create_dic(d = d, frtype = frtype)
 
@@ -45,7 +44,7 @@ create_dic <- function(d, frtype = NULL, extended = FALSE){
 }
 
 
-#' Validate dataframe for requirements
+#' Validate dataframe or list of dataframes for requirements
 #'
 #' Validates whether a given dataframe of list of dataframes meets the requirements
 #' specified in `requirements`
@@ -53,12 +52,9 @@ create_dic <- function(d, frtype = NULL, extended = FALSE){
 #' @param x Dataframe or list of dataframes to be validated
 #' @param requirements List of requirements to be validated
 #'
-#' @return List object which returns for each requirement whether it x satisfies it,
-#' using label param passed as part of requirements
+#' @return List object which returns for each requirement whether x satisfies it
 #'
 #' @export
-#'
-#' @examples
 validate_requirements <- function(x, requirements){
   output <- list()
 

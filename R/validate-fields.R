@@ -1,11 +1,19 @@
-validate_fields <- function(x, requirements){
+validate_fields <- function(x, requirements, validated_table_meta = TRUE, validated_table_specs = TRUE){
+
+  if(!validated_table_meta | !validated_table_specs) return(NULL)
 
   output <- list()
 
   table_ids <- names(requirements$table)
 
   for(table_id in table_ids){
-    table <- x[[table_id]]
+
+    if(length(table_ids) == 1){
+      table <- x
+    } else {
+      table <- x[[table_id]]
+    }
+
     dic <- create_dic(table, extended = TRUE)
 
     fields <- check_fields(fields = requirements$table[[table_id]]$fields)
@@ -16,18 +24,19 @@ validate_fields <- function(x, requirements){
     unavailable_columns <- c()
     output_table <- list()
 
-    # Test all column in dic against all field specifications
     field_requirements_checked <- fields %>%
       purrr::map(~check_field_requirements(field = .x, dic = dic)) %>%
       purrr::set_names(field_ids)
 
-    # Order field specs so that loop starts with those where just enough columns satisfy requirement
     fields_ordered <- order_fields(fields = field_requirements_checked)
 
+    # Start with those field specification for which there are just enough columns that satisfy requirement.
+    # Once columns are assigned to a field specification, they are marked as 'unavilable_columns' for the next field specification.
+    # The more columns there are for a field specification to 'choose from' the later this field specification happens in this loop.
     for(field in fields_ordered){
 
       validated_columns <- field$validated_columns
-      req_n_cols <- field$req_n_cols
+      req_n_cols <- field$n_cols
 
       met <- FALSE
       n_columns_available <- 0
@@ -59,7 +68,7 @@ validate_fields <- function(x, requirements){
 
         if(sufficient_n_cols){
           met <- TRUE
-          use_cols <- validated_columns[specs_met,]$id[1:(req_n_cols[[1]]+1)]
+          use_cols <- available_columns[1:(req_n_cols[[1]]+1)]
         }
       }
 
@@ -85,51 +94,26 @@ validate_fields <- function(x, requirements){
 
     }
 
+    output_table$all_requirements_met <- all(output_table %>% purrr::map(~.x$met) %>% unlist())
     output[[table_id]] <- output_table
   }
 
+  requirements_met <- output %>% purrr::map_lgl(~.x$all_requirements_met) %>% unlist()
+  output$all_requirements_met <- all(requirements_met)
   output
 }
 
 
-check_fields <- function(fields){
-  fields %>% purrr::map(function(.x){
-    .x$n_cols <- check_req_n_cols(n_cols = .x$n_cols)
-    .x$specs <- check_specs(specs = .x$specs)
-    if(is.null(.x$id_required)) .x$id_required <- FALSE
-    .x
-  })
-}
-
-
-check_specs <- function(specs){
-  if(is.null(specs)) stop("Column specs missing.")
-  # If `equals` has been left out as short-cut it is added here
-  for(specs_type in names(specs)){
-    specification <- specs[[specs_type]]
-    if(!is.list(specification)) specs[[specs_type]] <- list(equals = specification)
-  }
-
-  specs
-}
-
-
-check_req_n_cols <- function(n_cols){
-  # If n_cols is null, must be greater than 0
-  if(is.null(n_cols)) n_cols <- list(greater_than = 0)
-  # If n_cols greater than 0 has been left out as short-cut it is added here
-  if(!is.list(n_cols)) n_cols <- list(equals = n_cols)
-  n_cols
-}
-
-
-get_min_n_cols <- function(req_n_cols){
-  n_cols <- req_n_cols[[1]]
-  if(names(req_n_cols) == "greater_than") n_cols <- n_cols + 1
-  n_cols
-}
-
-
+#' Validate columns
+#'
+#' For all field specifications, check for each column in dic whether or not the column meets the fields requirements.
+#'
+#' @param dic Extended dictionary, created by created_dic(df, extended = TRUE)
+#' @param specs List of field specifications
+#' @param field_id Field id
+#'
+#' @return Tibble with an 'id' column for the column id, a boolean 'meets_requirements' column indicating whether the column meets
+#' the field specifications and a boolean 'matches_id' column indicating whether the column id is equal to the field id.
 validate_columns <- function(dic, specs, field_id){
   dic_selected <- dic %>%
     dplyr::select(id, dplyr::any_of(names(specs)) & !label)
@@ -144,18 +128,14 @@ validate_columns <- function(dic, specs, field_id){
 }
 
 
-order_fields <- function(fields){
-  order <- fields %>%
-    purrr::map_df("diff_want_is") %>%
-    tidyr::pivot_longer(cols = everything()) %>%
-    dplyr::arrange(value) %>%
-    dplyr::select(-value) %>%
-    dplyr::pull(name)
-
-  fields[order]
-}
-
-
+#' Check field requirements
+#'
+#' Create list of validated field requirements (before checking against OTHER field requirements)
+#'
+#' @param field Field requirements
+#' @param dic Extended dictionary
+#'
+#' @return List of checked field requirements
 check_field_requirements <- function(field, dic){
 
   field_id <- field$field_id
@@ -174,12 +154,31 @@ check_field_requirements <- function(field, dic){
   field$id_found <- id_found
   field$id_meets_requirements <- id_meets_requirements
   field$validated_columns <- validated_columns
-  field$req_n_cols <- field$n_cols
   field$diff_want_is <- diff_want_is
   field
 }
 
 
+#' Diff want is
+#'
+#' This function returns an integer inticating the difference between how many columns of a certain type are required
+#' VS how many columns of that type exist in the data (as validated by validated_columns).
+#'
+#' If diff_want_is = 0, there are as many columns of a certain type available as required.
+#' If diff_want_is > 0, there are fewer columns of a certain type than required.
+#' If diff_want_is < 0, there are more columns of a certain type than required.
+#'
+#' In the special case that id_required (if a column is required to have a certain column name/id),
+#' then diff_want_is = 0 if that column id exists in the data and it meets the requirements,
+#' otherwise diff_want_is = -1
+#'
+#' @param id_required Boolean, whether or not the data must have a column with the specific id/name
+#' @param id_found Boolean, whether the specific id/name has been found in the data
+#' @param id_meets_requirements If id_found == TRUE, whether id meets field requirements
+#' @param validated_columns Tibble of validated columns
+#' @param field List of field specifications
+#'
+#' @return Integer
 get_diff_want_is <- function(id_required, id_found, id_meets_requirements, validated_columns, field){
   diff_want_is <- NULL
   if(id_required){
@@ -194,4 +193,30 @@ get_diff_want_is <- function(id_required, id_found, id_meets_requirements, valid
     diff_want_is <- n_cols_meet_requirement - get_min_n_cols(req_n_cols = field$n_cols)
   }
   diff_want_is
+}
+
+
+#' Order fields
+#'
+#' Order field specifications by diff_want_is.
+#'
+#' @param fields List of field specifications
+#'
+#' @return Ordered list of field specification
+order_fields <- function(fields){
+  order <- fields %>%
+    purrr::map_df("diff_want_is") %>%
+    tidyr::pivot_longer(cols = everything()) %>%
+    dplyr::arrange(value) %>%
+    dplyr::select(-value) %>%
+    dplyr::pull(name)
+
+  fields[order]
+}
+
+
+get_min_n_cols <- function(req_n_cols){
+  n_cols <- req_n_cols[[1]]
+  if(names(req_n_cols) == "greater_than") n_cols <- n_cols + 1
+  n_cols
 }

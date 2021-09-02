@@ -2,7 +2,7 @@
 % Please edit documentation in R/validate.R
 \name{validate_requirements}
 \alias{validate_requirements}
-\title{Validate dataframe for requirements}
+\title{Validate dataframe or list of dataframes for requirements}
 \usage{
 validate_requirements(x, requirements)
 }
@@ -12,8 +12,7 @@ validate_requirements(x, requirements)
 \item{requirements}{List of requirements to be validated}
 }
 \value{
-List object which returns for each requirement whether it x satisfies it,
-using label param passed as part of requirements
+List object which returns for each requirement whether x satisfies it
 }
 \description{
 Validates whether a given dataframe of list of dataframes meets the requirements
