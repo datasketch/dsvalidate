@@ -142,4 +142,42 @@ test_that("table specs validated", {
   expect_equal(output_too_few_columns[[table_id]]$frType, not_validated(want = requirements$table[[table_id]]$specs$frType,
                                                                         is = "none"))
 
+
+  expect_false(output_too_few_columns$all_requirements_met)
+
+
+
+  # second example where requirements are met
+  df <- data.frame(col1 = c(1:20),
+                   col2 = c(rep("A", 10), rep("B", 10)),
+                   col3 = c(rep("A", 10), rep("B", 10)))
+  df1 <- data.frame(cola = c(rep("A", 10), rep("B", 10)),
+                    colb = c(rep("A", 10), rep("B", 10)))
+
+  l_df <- list(nodes = df,
+               edges = df1)
+
+  table_id <- "nodes"
+
+  output_enough_columns <- validate_table_specs(x = l_df,
+                                                requirements = requirements)
+
+  expect_equal(output_enough_columns[["nodes"]]$n_cols, validated())
+
+  expect_equal(output_enough_columns[["nodes"]]$n_rows, validated())
+
+  expect_equal(output_enough_columns[["nodes"]]$frType, validated())
+
+  expect_equal(output_enough_columns[["edges"]]$n_cols, validated())
+
+  expect_equal(output_enough_columns[["edges"]]$n_rows, validated())
+
+  expect_equal(output_enough_columns[["edges"]]$frType, validated())
+
+
+  expect_true(output_enough_columns$all_requirements_met)
+
+
+  expect_null(validate_table_specs(x, requirements, validated_table_meta = FALSE))
+
 })

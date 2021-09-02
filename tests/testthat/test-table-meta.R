@@ -126,5 +126,9 @@ test_that("table meta validated", {
   expect_equal(output_enough_tables$n_tables, validated())
   expect_equal(output_enough_tables$table_ids, validated())
 
+  expect_false(output_insufficient_tables$all_requirements_met)
+  expect_false(output_wrong_ids$all_requirements_met)
+  expect_true(output_enough_tables$all_requirements_met)
+
 })
 

@@ -24,3 +24,25 @@ test_that("requirements loaded", {
   expect_equal(requirements$table$edges$specs$n_rows, list(greater_than = 0))
 
 })
+
+test_that("fields checked", {
+
+  fields <- list(table1 =
+                   list(field_id = "a",
+                        label = "blah",
+                        n_cols = 3,
+                        specs = list(unique = TRUE,
+                                     hdType = "Cat")))
+
+  expected_output <- list(table1 =
+                            list(field_id = "a",
+                                 label = "blah",
+                                 n_cols = list(equals = 3),
+                                 specs = list(unique = list(equals = TRUE),
+                                              hdType = list(equals = "Cat")),
+                                 id_required = FALSE))
+
+  actual_output <- check_fields(fields)
+
+  expect_equal(actual_output, expected_output)
+})
