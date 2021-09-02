@@ -1,25 +1,4 @@
-test_that("columns validated", {
-  df <- data.frame(id = c(1:20),
-                   b = c(rep("A", 10), rep("B", 10)),
-                   c = c(rep("A", 10), rep("B", 10)))
-  f <- homodatum::fringe(df)
-  dic <- create_dic(df, extended = TRUE)
-
-  specs <- list(hdType = list(is_any_of = c("Cat", "Num")),
-                unique = list(equals = TRUE),
-                n_distinct = list(greater_than = 10))
-
-  expected_output <- dplyr::tibble(id = names(df),
-                                   meets_requirement = c(TRUE, FALSE, FALSE),
-                                   matches_id = c(FALSE, TRUE, FALSE))
-
-  actual_output <- validate_columns(dic, specs, field_id = "b")
-
-  expect_equal(actual_output, expected_output)
-
-})
-
-test_that("fields validated", {
+test_that("data validated", {
 
   path <- system.file("test_dsvalidate", "ex03-network", "dsvalidate", package = "dsvalidate")
   requirements <- requirements_load(path = path)
@@ -33,28 +12,26 @@ test_that("fields validated", {
   x <- list(nodes = df,
             edges = df1)
 
-  table_id <- "nodes"
+  output_validate <- validate_requirements(x = x,
+                                           requirements = requirements)
 
-  output_validate_fields <- validate_fields(x = x,
-                                            requirements = requirements)
+  # check if all meta table requirements met
+  expect_true(output_validate$table$all_requirements_met)
 
+  # check if all table specs requirements met
+  expect_true(output_validate$specs$all_requirements_met)
 
-  checked_fields <- check_fields(requirements$table[[table_id]]$fields)
+  # check if all fields requirements are met in table 'nodes'
+  expect_false(output_validate$fields$nodes$all_requirements_met)
 
+  # check if all fields requirements are met in table 'edges'
+  expect_true(output_validate$fields$edges$all_requirements_met)
 
-  expect_equal(output_validate_fields[[table_id]]$id$met, TRUE)
+  # check if all fields requirements
+  expect_false(output_validate$fields$all_requirements_met)
 
-  expect_equal(output_validate_fields[[table_id]]$label, list(met = FALSE,
-                                                              id_found = FALSE,
-                                                              id_required = FALSE,
-                                                              specs = checked_fields$label$specs,
-                                                              req_n_cols = list(greater_than = 0),
-                                                              n_columns_available = 0,
-                                                              use_cols = NULL,
-                                                              col_used_in_other_requirement = NULL))
-
-  expect_equal(output_validate_fields[[table_id]]$description, list(met = TRUE,
-                                                                    use_cols = "b"))
+  # CHECK IF ALL REQUIREMENTS ARE MET COMPLETELY
+  expect_false(output_validate$all_requirements_met)
 
 })
 
