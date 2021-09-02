@@ -18,6 +18,9 @@ validate_table_meta <- function(x, requirements){
                                          validated_data_type = output$data_type$met,
                                          validated_n_tables = output$n_tables$met)
 
+  all_requirements_met <- all(output$data_type$met, output$n_tables$met, output$table_ids$met)
+
+  output$all_requirements_met <- all_requirements_met
   output
 }
 
